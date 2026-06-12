@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorting Race: Interactive Visualization</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="header">
+            <div class="badge">🤸 Beginner Friendly</div>
+            <h1>Sorting <span class="gradient-text">Race</span> 🏁</h1>
+            <p class="subtitle">Enter some numbers, guess the winner, and watch <span class="orange-text">Bubble Sort</span> race against <span class="blue-text">Merge Sort</span> in real-time!</p>
+        </div>
+
+        <div class="card game-card">
+            <h2><span class="icon">🎮</span> Step 1 — Guess the Winner!</h2>
+            <p class="card-desc">Who do you think will finish first?</p>
+            <div class="guess-options">
+                <label class="guess-option">
+                    <input type="radio" name="winner-guess" value="bubble">
+                    <div class="guess-box bubble-guess">🫧 Bubble Sort</div>
+                </label>
+                <label class="guess-option">
+                    <input type="radio" name="winner-guess" value="merge">
+                    <div class="guess-box merge-guess">🔀 Merge Sort</div>
+                </label>
+            </div>
+            <div id="game-result" class="hidden result-banner"></div>
+            <div class="points-display">Score: <span id="user-points">0</span> points</div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">🔢</span> Step 2 — Enter Your Numbers</h2>
+            <div class="input-group">
+                <input type="text" id="numbers-input" placeholder="e.g. 64, 34, 25, 12, 22, 11, 90">
+                <button id="sort-btn" class="primary-btn">Start Race ⚡</button>
+            </div>
+            
+            <div class="quick-actions">
+                <span class="try-label">🎲 Try:</span>
+                <button class="action-btn" data-action="rand5">5 random numbers</button>
+                <button class="action-btn" data-action="rand10">10 random numbers</button>
+                <button class="action-btn" data-action="rand20">20 random numbers</button>
+                <button class="action-btn" data-action="sorted">Already Sorted ✅</button>
+                <button class="action-btn" data-action="reversed">Reverse Order 🔃</button>
+            </div>
+            <p id="error-message" class="error hidden"></p>
+        </div>
+
+        <div id="visualization-section" class="hidden">
+            <div class="card race-card">
+                <h2><span class="icon">🏎️</span> Live Race Track</h2>
+                <div class="race-track-container">
+                    <div class="race-lane">
+                        <div class="lane-label">Bubble Sort 🫧</div>
+                        <div class="track">
+                            <div id="bubble-progress" class="progress-bar bubble-bar"></div>
+                        </div>
+                        <div class="racer-icon" id="bubble-racer">🏎️</div>
+                        <div class="finish-line"></div>
+                    </div>
+                    <div class="race-lane">
+                        <div class="lane-label">Merge Sort 🔀</div>
+                        <div class="track">
+                            <div id="merge-progress" class="progress-bar merge-bar"></div>
+                        </div>
+                        <div class="racer-icon" id="merge-racer">🏎️</div>
+                        <div class="finish-line"></div>
+                    </div>
+                </div>
+                <div id="winner-announcement" class="hidden winner-text"></div>
+            </div>
+
+            <div class="card controls-card">
+                <h2><span class="icon">🎛️</span> Playback Controls</h2>
+                <div class="controls-bar">
+                    <button id="btn-restart" class="ctrl-btn" title="Restart">🔄</button>
+                    <button id="btn-prev" class="ctrl-btn" title="Previous Step">⏮</button>
+                    <button id="btn-play-pause" class="ctrl-btn play-pause-btn" title="Play/Pause">▶ Play</button>
+                    <button id="btn-next" class="ctrl-btn" title="Next Step">⏭</button>
+                </div>
+                <div class="status-panel">
+                    <p><strong>Bubble Sort:</strong> <span id="bubble-status-text">Waiting to start...</span></p>
+                    <p><strong>Merge Sort:</strong> <span id="merge-status-text">Waiting to start...</span></p>
+                </div>
+            </div>
+
+            <div class="card viz-card">
+                <h2><span class="icon">👁️</span> Live Visualization</h2>
+                <div class="two-columns">
+                    <div class="viz-container">
+                        <h3>Bubble Sort</h3>
+                        <div id="bubble-viz" class="array-container"></div>
+                    </div>
+                    <div class="viz-container">
+                        <h3>Merge Sort</h3>
+                        <div id="merge-viz" class="array-container"></div>
+                    </div>
+                </div>
+                <div class="viz-legend">
+                    <div class="legend-item"><div class="color-box unsorted"></div> Unsorted</div>
+                    <div class="legend-item"><div class="color-box comparing"></div> Comparing</div>
+                    <div class="legend-item"><div class="color-box swapping"></div> Swapping</div>
+                    <div class="legend-item"><div class="color-box sorted"></div> Sorted</div>
+                </div>
+            </div>
+            
+            <div class="card recursion-card">
+                <h2><span class="icon">🌳</span> Merge Sort Recursion Tree</h2>
+                <p class="card-desc">Watch how Merge Sort divides and conquers the array!</p>
+                <div id="recursion-tree" class="tree-container"></div>
+            </div>
+
+            <div class="card ai-tutor-card">
+                <h2><span class="icon">🤖</span> AI Tutor: Why did this happen?</h2>
+                <div id="tutor-explanation" class="tutor-text">
+                    Waiting for the race to finish...
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><span class="icon">📈</span> Complexity Growth</h2>
+            <p class="card-desc">See how the number of operations grows as the list gets larger.</p>
+            <div class="slider-container">
+                <label for="n-slider">List Size (n): <span id="n-value">100</span></label>
+                <input type="range" id="n-slider" min="10" max="2000" step="10" value="100">
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="complexityChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card calc-card">
+            <h2><span class="icon">🧮</span> Complexity Calculator</h2>
+            <p class="card-desc">Calculate operations for any list size.</p>
+            <div class="input-group">
+                <input type="number" id="calc-input" placeholder="Enter N (e.g., 5000)">
+                <button id="calc-btn" class="primary-btn">Calculate</button>
+            </div>
+            <div id="calc-results" class="hidden">
+                <div class="two-columns">
+                    <div class="calc-box bubble-calc">
+                        <h4>Bubble Sort ≈ <span id="calc-bubble">0</span></h4>
+                        <p>operations</p>
+                    </div>
+                    <div class="calc-box merge-calc">
+                        <h4>Merge Sort ≈ <span id="calc-merge">0</span></h4>
+                        <p>operations</p>
+                    </div>
+                </div>
+                <div class="calc-conclusion" id="calc-conclusion"></div>
+            </div>
+        </div>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
